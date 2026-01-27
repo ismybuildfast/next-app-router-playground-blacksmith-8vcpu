@@ -90,7 +90,7 @@ jobs:
           DEPLOY_START=$(date +%s)
           # Retry logic for rate limiting
           for i in 1 2 3 4 5; do
-            if vercel deploy --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} 2>&1; then
+            if vercel deploy --archive=tgz --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} 2>&1; then
               break
             fi
             echo "Deploy attempt $i failed, waiting $((i * 30)) seconds..."
@@ -204,7 +204,7 @@ jobs:
           DEPLOY_START=$(date +%s)
           # Retry logic for rate limiting
           for i in 1 2 3 4 5; do
-            if vercel deploy --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}; then
+            if vercel deploy --archive=tgz --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}; then
               break
             fi
             echo "Deploy attempt $i failed, waiting $((i * 30)) seconds..."
@@ -257,7 +257,7 @@ jobs:
         run: |
           # Retry logic for rate limiting
           for i in 1 2 3 4 5; do
-            if vercel deploy --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}; then
+            if vercel deploy --archive=tgz --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}; then
               break
             fi
             echo "Deploy attempt $i failed, waiting $((i * 30)) seconds..."
