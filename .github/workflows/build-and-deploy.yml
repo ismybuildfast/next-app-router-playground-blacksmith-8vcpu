@@ -1,28 +1,24 @@
 name: Build and Deploy
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
 
 jobs:
   build-and-deploy:
-    runs-on:
-  workflow_dispatch: blacksmith-8vcpu-ubuntu-2404
+    runs-on: blacksmith-8vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: useblacksmith/setup-node@v5
         with:
-          node-version:
-  workflow_dispatch: '20'
+          node-version: '20'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version:
-  workflow_dispatch: 9
+          version: 9
 
       - name: Install Vercel CLI
         run: npm i -g vercel
@@ -92,7 +88,14 @@ jobs:
         id: deploy
         run: |
           DEPLOY_START=$(date +%s)
-          vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1
+          # Retry logic for rate limiting
+          for i in 1 2 3 4 5; do
+            if vercel deploy --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} 2>&1; then
+              break
+            fi
+            echo "Deploy attempt $i failed, waiting $((i * 30)) seconds..."
+            sleep $((i * 30))
+          done
           DEPLOY_END=$(date +%s)
           echo "deploy_end=$DEPLOY_END" >> $GITHUB_OUTPUT
         env:
@@ -199,7 +202,14 @@ jobs:
         id: deploy_incr
         run: |
           DEPLOY_START=$(date +%s)
-          vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+          # Retry logic for rate limiting
+          for i in 1 2 3 4 5; do
+            if vercel deploy --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}; then
+              break
+            fi
+            echo "Deploy attempt $i failed, waiting $((i * 30)) seconds..."
+            sleep $((i * 30))
+          done
           DEPLOY_END=$(date +%s)
           echo "deploy_end=$DEPLOY_END" >> $GITHUB_OUTPUT
         env:
@@ -244,7 +254,15 @@ jobs:
           cat .vercel/output/static/bench-incremental.txt
 
       - name: Final deploy with updated bench files
-        run: vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          # Retry logic for rate limiting
+          for i in 1 2 3 4 5; do
+            if vercel deploy --prebuilt --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}; then
+              break
+            fi
+            echo "Deploy attempt $i failed, waiting $((i * 30)) seconds..."
+            sleep $((i * 30))
+          done
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
