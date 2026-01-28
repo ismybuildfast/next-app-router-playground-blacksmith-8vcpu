@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "./build.sh",
-    "build-only": "next build",
+    "build-only": "next build --turbopack",
     "start": "next start",
     "prettier": "prettier --write --ignore-unknown ."
   },
