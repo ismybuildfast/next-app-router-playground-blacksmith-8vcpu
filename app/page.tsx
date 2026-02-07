@@ -2,13 +2,11 @@ import db from '#/lib/db';
 import { Boundary } from '#/ui/boundary';
 import { LinkStatus } from '#/ui/link-status';
 import Link from 'next/link';
-import { BenchmarkMarker } from './benchmark-marker';
 
 export default function Page() {
   const demos = db.demo.findMany();
   return (
     <>
-    <BenchmarkMarker />
     <Boundary
       label="Examples"
       animateRerendering={false}
