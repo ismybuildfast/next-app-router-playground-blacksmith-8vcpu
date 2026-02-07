@@ -60,7 +60,7 @@ jobs:
       # --- COLD BUILD ---
       - name: Reset benchmark marker
         run: |
-          cat > app/benchmark-marker.tsx << 'MARKER'
+          cat > app/bench/marker.tsx << 'MARKER'
           // This file is modified during incremental builds to trigger recompilation
           // Marker: baseline
           export const BENCHMARK_MARKER = 'baseline'
@@ -162,7 +162,7 @@ jobs:
           fi
           
           # Modify file to trigger rebuild
-          cat > app/benchmark-marker.tsx << EOF
+          cat > app/bench/marker.tsx << EOF
           // This file is modified during incremental builds to trigger recompilation
           // Marker: ${build_id}-incr-$(date +%s)
           export const BENCHMARK_MARKER = '${build_id}-incr'
