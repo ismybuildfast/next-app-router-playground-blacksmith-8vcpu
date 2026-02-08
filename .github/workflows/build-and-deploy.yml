@@ -76,7 +76,12 @@ jobs:
       - name: Record cold build start
         run: echo "$(date +%s)" > /tmp/build_start
 
-      - name: Build (cold) with Vercel
+      - name: Build (cold) with Next.js
+        run: |
+          rm -rf .next
+          pnpm run build-only
+
+      - name: Package cold build for Vercel
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -175,7 +180,10 @@ jobs:
       - name: Record incremental build start
         run: echo "$(date +%s)" > /tmp/incr_build_start
 
-      - name: Build (incremental) with Vercel
+      - name: Build (incremental) with Next.js
+        run: pnpm run build-only
+
+      - name: Package incremental build for Vercel
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
